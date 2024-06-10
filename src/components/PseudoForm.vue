@@ -1,5 +1,3 @@
-<!-- src/components/PseudoForm.vue -->
-
 <template>
   <div class="pseudo-form">
     <h1>Kahoot!</h1>
@@ -12,7 +10,7 @@
 </template>
 
 <script>
-import WebSocketService from '../services/websocket';
+import { mapActions, mapMutations, mapState } from 'vuex';
 
 export default {
   data() {
@@ -20,26 +18,29 @@ export default {
       pseudo: ''
     };
   },
+  computed: {
+    ...mapState(['socket', 'pseudo'])
+  },
   methods: {
+    ...mapActions(['connectWebSocket', 'sendMessage']),
+    ...mapMutations(['setPseudo']),
     submitPseudo() {
       if (this.pseudo.trim()) {
+        this.setPseudo(this.pseudo);
         const message = JSON.stringify({
           type: 'join',
           pseudo: this.pseudo,
           status: 'online'
         });
-        WebSocketService.send(message);
-        alert(`Bienvenue, ${this.pseudo}!`);
+        this.sendMessage(message);
+        this.$router.push('/another');
       } else {
         alert('Veuillez entrer un pseudo.');
       }
     }
   },
   mounted() {
-    WebSocketService.connect();
-  },
-  beforeUnmount() {
-    WebSocketService.close();
+    this.connectWebSocket();
   }
 };
 </script>

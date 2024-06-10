@@ -1,5 +1,3 @@
-<!-- src/components/AnotherComponent.vue -->
-
 <template>
   <div>
     <h1>Another Component</h1>
@@ -8,7 +6,15 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
-  name: 'AnotherComponent'
+  computed: {
+    ...mapState(['socket', 'pseudo'])
+  },
+  mounted() {
+    console.log('AnotherComponent mounted');
+    console.log('Pseudo:', this.pseudo);
+  }
 };
 </script>
