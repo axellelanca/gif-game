@@ -1,3 +1,5 @@
+<!-- src/components/PseudoForm.vue -->
+
 <template>
   <div class="pseudo-form">
     <h1>Kahoot!</h1>

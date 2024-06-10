@@ -1,3 +1,5 @@
+<!-- src/components/AnotherComponent.vue -->
+
 <template>
   <div>
     <h1>Another Component</h1>
