@@ -19,7 +19,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['socket', 'pseudo'])
+    ...mapState(['pseudo'])
   },
   methods: {
     ...mapActions(['connectWebSocket', 'sendMessage']),

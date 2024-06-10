@@ -6,13 +6,17 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 export default {
   computed: {
-    ...mapState(['socket', 'pseudo'])
+    ...mapState(['pseudo'])
+  },
+  methods: {
+    ...mapActions(['connectWebSocket']),
   },
   mounted() {
+    this.connectWebSocket();
     console.log('AnotherComponent mounted');
     console.log('Pseudo:', this.pseudo);
   }

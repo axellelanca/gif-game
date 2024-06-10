@@ -9,4 +9,8 @@ const app = createApp(App);
 
 app.use(router);
 app.use(store);
-app.mount('#app');
+
+store.dispatch('initializeStore').then(() => {
+  store.dispatch('connectWebSocket');
+  app.mount('#app');
+});

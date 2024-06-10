@@ -2,10 +2,36 @@
 
 import { createStore } from 'vuex';
 
+function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+function setCookie(name, value, days) {
+  const d = new Date();
+  d.setTime(d.getTime() + (days*24*60*60*1000));
+  const expires = "expires=" + d.toUTCString();
+  document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}
+
+function getCookie(name) {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(';');
+  for(let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
+
 const store = createStore({
   state: {
     socket: null,
-    pseudo: ''
+    pseudo: '',
+    uuid: ''
   },
   mutations: {
     setSocket(state, socket) {
@@ -13,6 +39,11 @@ const store = createStore({
     },
     setPseudo(state, pseudo) {
       state.pseudo = pseudo;
+      setCookie('pseudo', pseudo, 7);
+    },
+    setUUID(state, uuid) {
+      state.uuid = uuid;
+      setCookie('uuid', uuid, 7);
     }
   },
   actions: {
@@ -22,6 +53,15 @@ const store = createStore({
 
         socket.onopen = () => {
           console.log('WebSocket connected');
+          if (state.pseudo && state.uuid) {
+            const message = JSON.stringify({
+              type: 'join',
+              pseudo: state.pseudo,
+              status: 'online',
+              uuid: state.uuid
+            });
+            socket.send(message);
+          }
         };
 
         socket.onmessage = (event) => {
@@ -50,6 +90,12 @@ const store = createStore({
       if (state.socket) {
         state.socket.close();
       }
+    },
+    initializeStore({ commit }) {
+      const uuid = getCookie('uuid') || generateUUID();
+      const pseudo = getCookie('pseudo') || '';
+      commit('setUUID', uuid);
+      commit('setPseudo', pseudo);
     }
   }
 });
