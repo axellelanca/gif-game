@@ -31,7 +31,8 @@ const store = createStore({
   state: {
     socket: null,
     pseudo: '',
-    uuid: ''
+    uuid: '',
+    users: [] // Initialisez `users` en tant que tableau vide
   },
   mutations: {
     setSocket(state, socket) {
@@ -44,6 +45,9 @@ const store = createStore({
     setUUID(state, uuid) {
       state.uuid = uuid;
       setCookie('uuid', uuid, 7);
+    },
+    setUsers(state, users) {
+      state.users = users;
     }
   },
   actions: {
@@ -65,7 +69,15 @@ const store = createStore({
         };
 
         socket.onmessage = (event) => {
-          console.log('WebSocket message received:', event);
+          try {
+            const message = JSON.parse(event.data);
+            if (message.type === 'userList') {
+              commit('setUsers', message.users);
+            }
+            console.log('WebSocket message received:', message);
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
         };
 
         socket.onclose = () => {
