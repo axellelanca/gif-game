@@ -4,7 +4,6 @@
     <div class="input-container">
       <input v-model="pseudo" placeholder="Pseudo" />
       <button @click="submitPseudo">Valider</button>
-      <router-link to="/another">Go to Another Component</router-link>
     </div>
   </div>
 </template>
@@ -33,7 +32,7 @@ export default {
           status: 'online'
         });
         this.sendMessage(message);
-        this.$router.push('/another');
+        this.$router.push('/session');
       } else {
         alert('Veuillez entrer un pseudo.');
       }
