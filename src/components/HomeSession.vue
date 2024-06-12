@@ -17,7 +17,6 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
-
 export default {
   data() {
     return {
@@ -28,9 +27,7 @@ export default {
   computed: {
     ...mapState(['pseudo', 'users']),
     connectedUsers() {
-      const filteredUsers = this.users.filter(user => user.status === 'online');
-      console.log('Connected Users:', filteredUsers);
-      return filteredUsers;
+      return this.users.filter(user => user.status === 'online');
     }
   },
   methods: {
@@ -43,12 +40,12 @@ export default {
         timestamp: date.getTime()
       };
       this.sendMessage(JSON.stringify(message));
-      this.startCountdown(30);
     },
-    startCountdown(initialCountdown) {
-      this.countdown = initialCountdown;
+    startCountdown(timestamp) {
+      this.countdown = timestamp;
       this.interval = setInterval(() => {
         if (this.countdown > 0) {
+          console.log(this.countdown)
           this.countdown--;
         } else {
           clearInterval(this.interval);
@@ -64,6 +61,19 @@ export default {
     if (this.interval) {
       clearInterval(this.interval);
     }
+  },
+  created() {
+    
+    this.$store.subscribe((mutation) => {
+      if (mutation.type === 'setGameStatus' && mutation.payload === 'waitingCountDown') {
+        const savedTimestamp = this.$store.state.timestamp;
+        const currentTimestamp = Date.now();
+        const countdown = Math.max(0, Math.floor((savedTimestamp - currentTimestamp + 30000) / 1000));
+        console.log(countdown);
+        this.startCountdown(countdown);
+        
+      }
+    });
   }
 };
 </script>
