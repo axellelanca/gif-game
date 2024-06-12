@@ -29,17 +29,32 @@ export default {
     ...mapState(['pseudo', 'users']),
     connectedUsers() {
       const filteredUsers = this.users.filter(user => user.status === 'online');
-      console.log('Connected Users:', filteredUsers);  // Ajouter ce log pour déboguer
+      console.log('Connected Users:', filteredUsers);
       return filteredUsers;
     }
   },
   methods: {
-    ...mapActions(['connectWebSocket']),
+    ...mapActions(['connectWebSocket', 'sendMessage']),
     startGame() {
-      this.countdown = 30;
+      const message = {
+        type: "updateGameStatus",
+        status: "waitingCountDown",
+        countdown: 30
+      };
+      this.sendMessage(JSON.stringify(message));
+      this.startCountdown(30);
+    },
+    startCountdown(initialCountdown) {
+      this.countdown = initialCountdown;
       this.interval = setInterval(() => {
         if (this.countdown > 0) {
           this.countdown--;
+          const message = {
+            type: "updateGameStatus",
+            status: "waitingCountDown",
+            countdown: this.countdown
+          };
+          this.sendMessage(JSON.stringify(message));
         } else {
           clearInterval(this.interval);
           this.$router.push('/choose');
