@@ -2,7 +2,7 @@
 
 import { createRouter, createWebHistory } from 'vue-router';
 import PseudoForm from '@/components/PseudoForm.vue';
-import AnotherComponent from '@/components/AnotherComponent.vue';
+import HomeSession from '@/components/HomeSession.vue';
 
 const routes = [
   {
@@ -11,9 +11,9 @@ const routes = [
     component: PseudoForm
   },
   {
-    path: '/another',
-    name: 'AnotherComponent',
-    component: AnotherComponent
+    path: '/session',
+    name: 'HomeSession',
+    component: HomeSession
   }
 ];
 
