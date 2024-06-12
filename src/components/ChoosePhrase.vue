@@ -31,7 +31,8 @@ export default {
       ],
       selectedPhrases: [],
       selectedIndex: null,
-      countdown: 30
+      countdown: 30,
+      interval: null
     };
   },
   methods: {
@@ -43,12 +44,12 @@ export default {
       this.selectedIndex = index;
     },
     startCountdown() {
-      const interval = setInterval(() => {
+      this.interval = setInterval(() => {
         if (this.countdown > 0) {
           this.countdown--;
         } else {
-          clearInterval(interval);
-          this.$router.push('/session');
+          clearInterval(this.interval);
+          this.$router.push('/game');
         }
       }, 1000);
     }
@@ -56,6 +57,11 @@ export default {
   mounted() {
     this.getRandomPhrases();
     this.startCountdown();
+  },
+  beforeUnmount() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
   }
 };
 </script>
@@ -70,6 +76,7 @@ export default {
 .timer {
   font-size: 24px;
   margin-bottom: 20px;
+  color: black; /* Ajout de cette ligne pour s'assurer que le texte est visible */
 }
 
 .phrases {
