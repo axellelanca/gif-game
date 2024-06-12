@@ -5,7 +5,7 @@
     <router-link to="/">Changer de pseudo</router-link>
     <div v-if="users && users.length">
       <ul>
-        <li v-for="user in users" :key="user.pseudo">
+        <li v-for="user in connectedUsers" :key="user.pseudo">
           {{ user.pseudo }} - {{ user.status }}
         </li>
       </ul>
@@ -18,7 +18,12 @@ import { mapActions, mapState } from 'vuex';
 
 export default {
   computed: {
-    ...mapState(['pseudo', 'users'])  // Ajoutez les utilisateurs à l'état calculé
+    ...mapState(['pseudo', 'users']),
+    connectedUsers() {
+      const filteredUsers = this.users.filter(user => user.status === 'online');
+      console.log('Connected Users:', filteredUsers);  // Ajouter ce log pour déboguer
+      return filteredUsers;
+    }
   },
   methods: {
     ...mapActions(['connectWebSocket']),
