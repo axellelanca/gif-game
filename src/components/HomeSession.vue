@@ -36,10 +36,11 @@ export default {
   methods: {
     ...mapActions(['connectWebSocket', 'sendMessage']),
     startGame() {
+      const date = new Date();
       const message = {
         type: "updateGameStatus",
         status: "waitingCountDown",
-        countdown: 30
+        timestamp: date.getTime()
       };
       this.sendMessage(JSON.stringify(message));
       this.startCountdown(30);
@@ -49,12 +50,6 @@ export default {
       this.interval = setInterval(() => {
         if (this.countdown > 0) {
           this.countdown--;
-          const message = {
-            type: "updateGameStatus",
-            status: "waitingCountDown",
-            countdown: this.countdown
-          };
-          this.sendMessage(JSON.stringify(message));
         } else {
           clearInterval(this.interval);
           this.$router.push('/choose');
