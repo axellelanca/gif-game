@@ -48,6 +48,12 @@ const store = createStore({
     },
     setUsers(state, users) {
       state.users = users;
+    },
+    setGameStatus(state, gameStatus) {
+      state.gameStatus = gameStatus;
+    },
+    setTimestamp(state, timestamp) {
+      state.timestamp = timestamp;
     }
   },
   actions: {
@@ -73,7 +79,11 @@ const store = createStore({
             const message = JSON.parse(event.data);
             if (message.type === 'userList') {
               commit('setUsers', message.users);
+            } else if (message.type === 'gameStatus') {
+              commit('setGameStatus', message.gameStatus);
+              commit('setTimestamp', message.timestamp);
             }
+
             console.log('WebSocket message received:', message);
           } catch (error) {
             console.error('Error parsing JSON:', error);

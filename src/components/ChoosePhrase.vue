@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 export default {
   data() {
     return {
@@ -32,10 +33,24 @@ export default {
       selectedPhrases: [],
       selectedIndex: null,
       countdown: 30,
-      interval: null
+      interval: null,
+      gameStarted: false // Ajout du drapeau
     };
   },
   methods: {
+    ...mapActions(['connectWebSocket', 'sendMessage']),
+    startGame() {
+      if (!this.gameStarted) {
+        this.gameStarted = true;
+        const date = new Date();
+        const message = {
+          type: "updateGameStatus",
+          status: "waitingCountDown",
+          timestamp: date.getTime()
+        };
+        this.sendMessage(JSON.stringify(message));
+      }
+    },
     getRandomPhrases() {
       const shuffled = this.phrases.sort(() => 0.5 - Math.random());
       this.selectedPhrases = shuffled.slice(0, 2);
@@ -43,7 +58,11 @@ export default {
     selectPhrase(index) {
       this.selectedIndex = index;
     },
-    startCountdown() {
+    startCountdown(timestamp) {
+      if (this.interval) {
+        clearInterval(this.interval); // Nettoie l'intervalle précédent
+      }
+      this.countdown = timestamp;
       this.interval = setInterval(() => {
         if (this.countdown > 0) {
           this.countdown--;
@@ -56,44 +75,25 @@ export default {
   },
   mounted() {
     this.getRandomPhrases();
-    this.startCountdown();
+    this.connectWebSocket();
+    this.startGame(); 
   },
   beforeUnmount() {
     if (this.interval) {
       clearInterval(this.interval);
     }
+  },
+  created() {
+    this.$store.subscribe((mutation) => {
+      if (mutation.type === 'setGameStatus' && mutation.payload === 'waitingCountDown' && this.$store.state.timestamp) {
+        const savedTimestamp = this.$store.state.timestamp;
+        const currentTimestamp = Date.now();
+        const countdown = Math.max(0, Math.floor((savedTimestamp - currentTimestamp + 30000) / 1000));
+        this.startCountdown(countdown);
+      }
+    });
   }
 };
 </script>
 
-<style scoped>
-.choose-phrase {
-  text-align: center;
-  padding: 20px;
-  color: white;
-}
-
-.timer {
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: black; /* Ajout de cette ligne pour s'assurer que le texte est visible */
-}
-
-.phrases {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.phrase-card {
-  background: #333;
-  padding: 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.phrase-card.selected {
-  background: #f39c12;
-}
-</style>
+<style src="../assets/styles/ChoosePhrase.css"></style>

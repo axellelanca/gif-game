@@ -17,7 +17,6 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
-
 export default {
   data() {
     return {
@@ -28,15 +27,22 @@ export default {
   computed: {
     ...mapState(['pseudo', 'users']),
     connectedUsers() {
-      const filteredUsers = this.users.filter(user => user.status === 'online');
-      console.log('Connected Users:', filteredUsers);  // Ajouter ce log pour déboguer
-      return filteredUsers;
+      return this.users.filter(user => user.status === 'online');
     }
   },
   methods: {
-    ...mapActions(['connectWebSocket']),
+    ...mapActions(['connectWebSocket', 'sendMessage']),
     startGame() {
-      this.countdown = 30;
+      const date = new Date();
+      const message = {
+        type: "updateGameStatus",
+        status: "waitingCountDown",
+        timestamp: date.getTime()
+      };
+      this.sendMessage(JSON.stringify(message));
+    },
+    startCountdown(timestamp) {
+      this.countdown = timestamp;
       this.interval = setInterval(() => {
         if (this.countdown > 0) {
           this.countdown--;
@@ -54,6 +60,17 @@ export default {
     if (this.interval) {
       clearInterval(this.interval);
     }
+  },
+  created() {
+    this.$store.subscribe((mutation) => {
+      if (mutation.type === 'setGameStatus' && mutation.payload === 'waitingCountDown' && this.$store.state.timestamp) {
+        const savedTimestamp = this.$store.state.timestamp;
+        const currentTimestamp = Date.now();
+        const countdown = Math.max(0, Math.floor((savedTimestamp - currentTimestamp + 30000) / 1000));
+        this.startCountdown(countdown);
+        
+      }
+    });
   }
 };
 </script>
