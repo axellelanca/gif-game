@@ -21,6 +21,7 @@ import { mapActions, mapState } from "vuex";
 export default {
   data() {
     return {
+      unsubscribe: null,
       countdown: null,
       interval: null,
     };
@@ -61,9 +62,12 @@ export default {
     if (this.interval) {
       clearInterval(this.interval);
     }
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   },
   created() {
-    this.$store.subscribe((mutation) => {
+    this.unsubscribe = this.$store.subscribe((mutation) => {
       if (
         mutation.type === "setGameStatus" &&
         mutation.payload === "waitingCountDown" &&
@@ -73,7 +77,7 @@ export default {
         const currentTimestamp = Date.now();
         const countdown = Math.max(
           0,
-          Math.floor((savedTimestamp - currentTimestamp + 30000) / 1000)
+          Math.floor((savedTimestamp - currentTimestamp + 5000) / 1000)
         );
         this.startCountdown(countdown);
       }

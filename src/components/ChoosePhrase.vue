@@ -20,6 +20,7 @@ import { mapActions } from "vuex";
 export default {
   data() {
     return {
+      unsubscribe: null,
       phrases: [
         "When you're vibing to music and an ad comes on",
         "When you're waiting for something and the internet is slow",
@@ -33,7 +34,7 @@ export default {
       selectedPhrases: [],
       selectedIndex: null,
       phraseToSend: null,
-      countdown: 30,
+      countdown: 5,
       interval: null,
       gameStarted: false, // Ajout du drapeau
     };
@@ -70,6 +71,14 @@ export default {
           this.countdown--;
         } else {
           clearInterval(this.interval);
+          const date = new Date();
+          const message = {
+          type: "updateGameStatus",
+          status: "waitingCountDownGif",
+          timestamp: date.getTime(),
+        };
+          clearInterval(this.interval);
+          this.sendMessage(JSON.stringify(message));
           this.$router.push("/gifs");
         }
       }, 1000);
@@ -89,21 +98,27 @@ export default {
       this.sendMessage(JSON.stringify(message));
       clearInterval(this.interval);
     }
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   },
+  
   created() {
-    this.$store.subscribe((mutation) => {
+    this.unsubscribe = this.$store.subscribe((mutation) => {
       if (
         mutation.type === "setGameStatus" &&
         mutation.payload === "waitingCountDown" &&
         this.$store.state.timestamp
       ) {
+        console.log(this.$store.state.timestamp)
         const savedTimestamp = this.$store.state.timestamp;
         const currentTimestamp = Date.now();
         const countdown = Math.max(
           0,
-          Math.floor((savedTimestamp - currentTimestamp + 30000) / 1000)
+          Math.floor((savedTimestamp - currentTimestamp + 5000) / 1000)
         );
         this.startCountdown(countdown);
+
       }
     });
   },
