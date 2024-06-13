@@ -1,9 +1,14 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import HeaderComponent from "./HeaderComponent.vue";
 
 const getSearch = ref("");
 const gifsList = ref([]);
+const countdown = ref(60);
+const selectedGifId = ref(null); // État réactif pour suivre l'image sélectionnée
+
+const router = useRouter();
 
 const fetchGif = async () => {
   try {
@@ -32,26 +37,44 @@ const fetchGif = async () => {
 watch(getSearch, () => {
   fetchGif();
 });
+
+onMounted(() => {
+  const interval = setInterval(() => {
+    if (countdown.value > 0) {
+      countdown.value--;
+    } else {
+      clearInterval(interval);
+      router.push("/vote");
+    }
+  }, 1000);
+});
+
+const selectGif = (id) => {
+  selectedGifId.value = id;
+};
 </script>
 
 <template>
-  <HeaderComponent />
-  <div style="height: 500px; width: 800px; border: 1px solid black">
+  <HeaderComponent :countdown="countdown" />
+  <div class="gif-selector-container">
     <input
-      class="customInput"
+      class="custom-input"
       type="text"
       v-model="getSearch"
-      placeholder="select le meme lo"
+      placeholder="Search for a meme..."
     />
-    <div>
+    <div class="gifs-list">
       <div
-        style="height: 100%; overflow: hidden"
+        class="gif-item"
+        :class="{ selected: selectedGifId === gif.id }"
         v-for="gif in gifsList"
         :key="gif.id"
+        @click="selectGif(gif.id)"
       >
-        <img :src="gif.url" :height="gif.height" :width="gif.width" alt="" />
+        <img :src="gif.url" :alt="`GIF ${gif.id}`" class="gif-image" />
       </div>
     </div>
+    <button class="validate-button">Validate</button>
   </div>
 </template>
 
