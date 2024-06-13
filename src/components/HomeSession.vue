@@ -45,7 +45,6 @@ export default {
       this.countdown = timestamp;
       this.interval = setInterval(() => {
         if (this.countdown > 0) {
-          console.log(this.countdown)
           this.countdown--;
         } else {
           clearInterval(this.interval);
@@ -63,13 +62,11 @@ export default {
     }
   },
   created() {
-    
     this.$store.subscribe((mutation) => {
-      if (mutation.type === 'setGameStatus' && mutation.payload === 'waitingCountDown') {
+      if (mutation.type === 'setGameStatus' && mutation.payload === 'waitingCountDown' && this.$store.state.timestamp) {
         const savedTimestamp = this.$store.state.timestamp;
         const currentTimestamp = Date.now();
         const countdown = Math.max(0, Math.floor((savedTimestamp - currentTimestamp + 30000) / 1000));
-        console.log(countdown);
         this.startCountdown(countdown);
         
       }

@@ -43,6 +43,6 @@ class WebSocketService {
     }
   }
   
-//  export default new WebSocketService('ws://10.0.4.53:4000');
-    export default new WebSocketService('ws://localhost:4000');
+      export default new WebSocketService('ws://10.0.4.53:4000');
+//    export default new WebSocketService('ws://localhost:4000');
   
