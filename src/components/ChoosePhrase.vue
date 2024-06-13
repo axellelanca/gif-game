@@ -7,7 +7,7 @@
         v-for="(phrase, index) in selectedPhrases"
         :key="index"
         :class="['phrase-card', { selected: selectedIndex === index }]"
-        @click="selectPhrase(index)"
+        @click="selectPhrase(index, phrase)"
       >
         {{ phrase }}
       </div>
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from "vuex";
 export default {
   data() {
     return {
@@ -28,17 +28,18 @@ export default {
         "When you're trying to be quiet but drop something loud",
         "When your phone dies right before you get to your destination",
         "When you send a risky text and see 'typing...'",
-        "When you forget what you were going to say mid-sentence"
+        "When you forget what you were going to say mid-sentence",
       ],
       selectedPhrases: [],
       selectedIndex: null,
+      phraseToSend: null,
       countdown: 30,
       interval: null,
-      gameStarted: false // Ajout du drapeau
+      gameStarted: false, // Ajout du drapeau
     };
   },
   methods: {
-    ...mapActions(['connectWebSocket', 'sendMessage']),
+    ...mapActions(["connectWebSocket", "sendMessage"]),
     startGame() {
       if (!this.gameStarted) {
         this.gameStarted = true;
@@ -46,7 +47,7 @@ export default {
         const message = {
           type: "updateGameStatus",
           status: "waitingCountDown",
-          timestamp: date.getTime()
+          timestamp: date.getTime(),
         };
         this.sendMessage(JSON.stringify(message));
       }
@@ -55,8 +56,9 @@ export default {
       const shuffled = this.phrases.sort(() => 0.5 - Math.random());
       this.selectedPhrases = shuffled.slice(0, 2);
     },
-    selectPhrase(index) {
+    selectPhrase(index, phrase) {
       this.selectedIndex = index;
+      this.phraseToSend = phrase;
     },
     startCountdown(timestamp) {
       if (this.interval) {
@@ -68,31 +70,43 @@ export default {
           this.countdown--;
         } else {
           clearInterval(this.interval);
-          this.$router.push('/gifs');
+          this.$router.push("/gifs");
         }
       }, 1000);
-    }
+    },
   },
   mounted() {
     this.getRandomPhrases();
     this.connectWebSocket();
-    this.startGame(); 
+    this.startGame();
   },
   beforeUnmount() {
     if (this.interval) {
+      const message = {
+        type: "startRound",
+        phrase: this.phraseToSend,
+      };
+      this.sendMessage(JSON.stringify(message));
       clearInterval(this.interval);
     }
   },
   created() {
     this.$store.subscribe((mutation) => {
-      if (mutation.type === 'setGameStatus' && mutation.payload === 'waitingCountDown' && this.$store.state.timestamp) {
+      if (
+        mutation.type === "setGameStatus" &&
+        mutation.payload === "waitingCountDown" &&
+        this.$store.state.timestamp
+      ) {
         const savedTimestamp = this.$store.state.timestamp;
         const currentTimestamp = Date.now();
-        const countdown = Math.max(0, Math.floor((savedTimestamp - currentTimestamp + 30000) / 1000));
+        const countdown = Math.max(
+          0,
+          Math.floor((savedTimestamp - currentTimestamp + 30000) / 1000)
+        );
         this.startCountdown(countdown);
       }
     });
-  }
+  },
 };
 </script>
 
