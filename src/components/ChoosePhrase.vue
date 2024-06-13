@@ -68,7 +68,7 @@ export default {
           this.countdown--;
         } else {
           clearInterval(this.interval);
-          this.$router.push('/game');
+          this.$router.push('/gifs');
         }
       }, 1000);
     }

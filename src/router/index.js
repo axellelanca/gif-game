@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import PseudoForm from "@/components/PseudoForm.vue";
 import HomeSession from "@/components/HomeSession.vue";
 import GifSelectorComponent from "@/components/GifSelectorComponent.vue";
+import ChoosePhrase from "@/components/ChoosePhrase.vue";
 
 const routes = [
   {
@@ -15,6 +16,11 @@ const routes = [
     path: "/session",
     name: "HomeSession",
     component: HomeSession,
+  },
+  {
+    path: "/choose",
+    name: "ChoosePhrase",
+    component: ChoosePhrase,
   },
   {
     path: "/gifs",
