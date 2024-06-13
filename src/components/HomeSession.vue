@@ -16,28 +16,29 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from "vuex";
+
 export default {
   data() {
     return {
       countdown: null,
-      interval: null
+      interval: null,
     };
   },
   computed: {
-    ...mapState(['pseudo', 'users']),
+    ...mapState(["pseudo", "users"]),
     connectedUsers() {
-      return this.users.filter(user => user.status === 'online');
-    }
+      return this.users.filter((user) => user.status === "online");
+    },
   },
   methods: {
-    ...mapActions(['connectWebSocket', 'sendMessage']),
+    ...mapActions(["connectWebSocket", "sendMessage"]),
     startGame() {
       const date = new Date();
       const message = {
         type: "updateGameStatus",
         status: "waitingCountDown",
-        timestamp: date.getTime()
+        timestamp: date.getTime(),
       };
       this.sendMessage(JSON.stringify(message));
     },
@@ -48,10 +49,10 @@ export default {
           this.countdown--;
         } else {
           clearInterval(this.interval);
-          this.$router.push('/choose');
+          this.$router.push("/choose");
         }
       }, 1000);
-    }
+    },
   },
   mounted() {
     this.connectWebSocket();
@@ -63,14 +64,20 @@ export default {
   },
   created() {
     this.$store.subscribe((mutation) => {
-      if (mutation.type === 'setGameStatus' && mutation.payload === 'waitingCountDown' && this.$store.state.timestamp) {
+      if (
+        mutation.type === "setGameStatus" &&
+        mutation.payload === "waitingCountDown" &&
+        this.$store.state.timestamp
+      ) {
         const savedTimestamp = this.$store.state.timestamp;
         const currentTimestamp = Date.now();
-        const countdown = Math.max(0, Math.floor((savedTimestamp - currentTimestamp + 30000) / 1000));
+        const countdown = Math.max(
+          0,
+          Math.floor((savedTimestamp - currentTimestamp + 30000) / 1000)
+        );
         this.startCountdown(countdown);
-        
       }
     });
-  }
+  },
 };
 </script>
