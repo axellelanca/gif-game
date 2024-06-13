@@ -1,5 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
+import HeaderComponent from "./HeaderComponent.vue";
+
 const customInput = ref("customInput");
 
 const getSearch = ref("");
@@ -35,6 +37,7 @@ watch(getSearch, () => {
 </script>
 
 <template>
+  <HeaderComponent />
   <div style="height: 500px; width: 800px; border: 1px solid black">
     <input
       :class="customInput"

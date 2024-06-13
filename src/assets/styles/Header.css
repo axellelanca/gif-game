@@ -1,0 +1,20 @@
+.header {
+  height: 25vh;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 400px;
+}
+
+.info > div:first-of-type {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
