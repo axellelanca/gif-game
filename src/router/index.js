@@ -5,6 +5,8 @@ import PseudoForm from "@/components/PseudoForm.vue";
 import HomeSession from "@/components/HomeSession.vue";
 import GifSelectorComponent from "@/components/GifSelectorComponent.vue";
 import ChoosePhrase from "@/components/ChoosePhrase.vue";
+import VoteComponent from '@/components/VoteComponent.vue'; 
+
 
 const routes = [
   {
@@ -24,9 +26,14 @@ const routes = [
   },
   {
     path: "/gifs",
-    name: "",
+    name: "ChooseGifs",
     component: GifSelectorComponent,
   },
+  {
+    path: '/vote', // Ajouter une nouvelle route pour VoteComponent
+    name: 'VoteComponent',
+    component: VoteComponent
+  }
 ];
 
 const router = createRouter({
