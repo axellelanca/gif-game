@@ -2,8 +2,6 @@
 import { ref, watch } from "vue";
 import HeaderComponent from "./HeaderComponent.vue";
 
-const customInput = ref("customInput");
-
 const getSearch = ref("");
 const gifsList = ref([]);
 
@@ -40,7 +38,7 @@ watch(getSearch, () => {
   <HeaderComponent />
   <div style="height: 500px; width: 800px; border: 1px solid black">
     <input
-      :class="customInput"
+      class="customInput"
       type="text"
       v-model="getSearch"
       placeholder="select le meme lo"
@@ -57,19 +55,4 @@ watch(getSearch, () => {
   </div>
 </template>
 
-<style>
-.customInput {
-  padding: 0;
-  border: 1px solid black;
-  border-top: 0;
-  border-left: 0;
-  border-right: 0;
-  height: 30px;
-  outline: none;
-  width: 100%;
-  background: none;
-  font-family: inherit;
-  font-size: inherit;
-  color: inherit;
-}
-</style>
+<style src="../assets/styles/GifSelector.css"></style>
