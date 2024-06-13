@@ -66,34 +66,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.choose-phrase {
-  text-align: center;
-  padding: 20px;
-  color: white;
-}
-
-.timer {
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: black; /* Ajout de cette ligne pour s'assurer que le texte est visible */
-}
-
-.phrases {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.phrase-card {
-  background: #333;
-  padding: 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.phrase-card.selected {
-  background: #f39c12;
-}
-</style>
+<style  src="../assets/styles/ChoosePhrase.css"></style>
