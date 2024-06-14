@@ -1,33 +1,142 @@
-/* src/assets/styles/PseudoForm.css */
-
 .pseudo-form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     height: 100vh;
-    background-color: #46178f;
     color: white;
-  }
-  
-  .input-container {
+}
+
+.welcome-msg {
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-  
-  input {
-    padding: 10px;
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
-  
-  button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: black;
-    color: white;
+    justify-content: center;
+    margin-top: 45px;
+}
+
+.welcome-txt {
+    width: 80%;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.logo-home-page {
+    width: 720px;
+    height: auto;
+}
+
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    position: relative;
+}
+
+.input-container::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 444px;
+    height: 50px;
+    border-radius: 3px;
+    background: #F0F154;
+    z-index: 0;
+}
+
+.input-container input {
+    width: 444px;
+    height: 50px;
+    border-radius: 3px;
+    background: #FFF;
+    margin-bottom: 55px;
+    position: relative;
+    z-index: 1;
     border: none;
+    box-sizing: border-box;
+}
+
+
+.input-container input:focus {
+    outline: none;
+    border: 2px solid #F080DE;
+    box-shadow: 0px 0px 10px 0px #F080DE;
+}
+
+
+.input-container input::placeholder, .input-container input {
+    color: #000;
+    font-family: "IBM Plex Mono";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    padding: 10px
+}
+
+.input-container button {
+    width: 228px;
+    height: 57px;
+    border-radius: 44px;
+    background: linear-gradient(90deg, #F080DE 0%, #7965FA 100%);
+    font-family: "IBM Plex Mono";
+    color: #FFF;
+    font-size: 25px;
+    font-weight: 500;
+    line-height: normal;
     cursor: pointer;
-  }
-  
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    border: none;
+}
+
+/*
+.input-container button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 44px;
+    background: linear-gradient(90deg, #7965FA 0%, #F080DE 100%);
+    transition: opacity 0.5s ease-in-out;
+    opacity: 0;
+    z-index: -1;
+}
+*/
+/*
+.input-container button:hover::before {
+    opacity: 1;
+}
+
+
+.input-container button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 44px;
+    background: linear-gradient(90deg, #F080DE 0%, #7965FA 100%);
+    transition: opacity 0.5s ease-in-out;
+    opacity: 1;
+    z-index: -2;
+}
+
+ */
+
+.p1-div-meme {
+    width: 100%;
+    display: flex;
+    justify-content: end;
+}
+
+.p1-div-meme img {
+    margin-right: 90px;
+}

@@ -1,11 +1,24 @@
 <template>
   <div class="pseudo-form">
-    <h1>Kahoot!</h1>
+    <div class="welcome-msg">
+      <div class="welcome-txt">
+        <img class="star" src="../assets/uwuStar.png" alt="" />
+        <p class="pageTitle">WELCOME TO</p>
+        <img class="star" src="../assets/uwuStar.png" alt="" />
+      </div>
+      <div>
+        <img class="logo-home-page" src="../assets/logo-what-a-meme.png" alt="" />
+      </div>
+    </div>
     <div class="input-container">
-      <input v-model="pseudo" placeholder="Pseudo" />
-      <button @click="submitPseudo">Valider</button>
+      <input  v-model="pseudo" placeholder="Choose your pseudo" />
+      <button @click="submitPseudo">Let's go</button>
+    </div>
+    <div class="p1-div-meme">
+      <img class="background" src="../assets/step1_picture.png" alt="" />
     </div>
   </div>
+
 </template>
 
 <script>
