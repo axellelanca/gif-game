@@ -1,46 +1,16 @@
 <script setup>
-import { ref, watch, onMounted, computed } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import HeaderComponent from "./HeaderComponent.vue";
-import { useStore } from "vuex";
 
 const getSearch = ref("");
 const gifsList = ref([]);
-const countdown = ref(10);
-const selectedGifUrl = ref(null); // État réactif pour suivre l'image sélectionnée
+const countdown = ref(60);
+const selectedGifId = ref(null); // État réactif pour suivre l'image sélectionnée
 
 const router = useRouter();
-const store = useStore();
-
-// Accéder à l'état 'updateRound' du store Vuex
-const phrase = computed(() => store.state.updateRound);
-const pseudo = computed(() => store.state.pseudo);
-const sendMessage = computed(() => store.state);
-
-const getMaxVotesPhrase = (votes) => {
-  if (!votes) return ""; // Vérification de sécurité pour s'assurer que votes n'est pas undefined
-
-  let maxVotes = -1;
-  let maxVotesPhrase = "";
-
-  for (const [phrase, vote] of Object.entries(votes)) {
-    if (vote > maxVotes) {
-      maxVotes = vote;
-      maxVotesPhrase = phrase;
-    }
-  }
-  return maxVotesPhrase;
-};
-
-// Propriété calculée pour obtenir la phrase avec le plus de votes
-const maxVotesPhrase = computed(() => getMaxVotesPhrase(phrase.value));
 
 const fetchGif = async () => {
-  console.log(
-    "okpijuhytdrfygvbhnj,kpiuytdryuiouuyjgduzgduzguzgdfuzg",
-    sendMessage
-  );
-  console.log("Max votes phrase:", maxVotesPhrase.value); // Ajout du log ici
   try {
     const request = await fetch(
       `https://tenor.googleapis.com/v2/search?q=${getSearch.value}&key=AIzaSyCds2gvFpebjl5Z2ExuUGRkn2b12dXHm0Q&limit=10`
@@ -57,6 +27,8 @@ const fetchGif = async () => {
       });
       return acc;
     }, []);
+
+    console.log(gifsList.value);
   } catch (error) {
     console.log(error);
   }
@@ -71,40 +43,20 @@ onMounted(() => {
     if (countdown.value > 0) {
       countdown.value--;
     } else {
-      const message = {
-        type: "updateGameStatus",
-        status: "waitingCountDown",
-        timestamp: "lkjhgf",
-      };
-      sendMessage(JSON.stringify(message));
-      console.log(pseudo);
       clearInterval(interval);
       router.push("/vote");
     }
   }, 1000);
 });
 
-const selectGif = (gif) => {
-  selectedGifUrl.value = gif.url;
-  console.log(store._actions);
-  // store._actions.sendMessage(
-  //   JSON.stringify({
-  //     bonjour: "hello",
-  //   })
-  // );
+const selectGif = (id) => {
+  selectedGifId.value = id;
 };
-
-// Watch for changes in the phrase and log them
-watch(phrase, (newVal) => {
-  console.log("Phrase from store:", newVal);
-});
 </script>
 
 <template>
   <HeaderComponent :countdown="countdown" />
   <div class="gif-selector-container">
-    <p>Phrase with the most votes: {{ maxVotesPhrase }}</p>
-    <!-- Affichage de la phrase avec le plus de votes -->
     <input
       class="custom-input"
       type="text"
@@ -117,7 +69,7 @@ watch(phrase, (newVal) => {
         :class="{ selected: selectedGifId === gif.id }"
         v-for="gif in gifsList"
         :key="gif.id"
-        @click="selectGif(gif)"
+        @click="selectGif(gif.id)"
       >
         <img :src="gif.url" :alt="`GIF ${gif.id}`" class="gif-image" />
       </div>
