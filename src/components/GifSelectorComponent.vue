@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import HeaderComponent from "./HeaderComponent.vue";
 
@@ -69,7 +69,7 @@ const selectGif = (id) => {
         :class="{ selected: selectedGifId === gif.id }"
         v-for="gif in gifsList"
         :key="gif.id"
-        @click="selectGif(gif.id)"
+        @click="selectGif(gif.id,gi)"
       >
         <img :src="gif.url" :alt="`GIF ${gif.id}`" class="gif-image" />
       </div>

@@ -6,8 +6,9 @@ const store = createStore({
   state: {
     socket: null,
     pseudo: "",
-    uuid: "",
-    users: [], // Initialisez `users` en tant que tableau vide
+    users: [],
+    updatePhrase: null,
+    gameStatus: "waiting",
   },
   mutations: {
     setSocket(state, socket) {
@@ -15,9 +16,6 @@ const store = createStore({
     },
     setPseudo(state, pseudo) {
       state.pseudo = pseudo;
-    },
-    setUUID(state, uuid) {
-      state.uuid = uuid;
     },
     setUsers(state, users) {
       state.users = users;
@@ -28,12 +26,14 @@ const store = createStore({
     setTimestamp(state, timestamp) {
       state.timestamp = timestamp;
     },
+    setUpdateRound(state, updateRound) {
+      state.updateRound = updateRound;
+    }
   },
   actions: {
     connectWebSocket({ commit, state }) {
       if (!state.socket || state.socket.readyState !== WebSocket.OPEN) {
         const socket = new WebSocket("ws://10.0.4.53:4000");
-        //const socket = new WebSocket('ws://localhost:4000');
 
         socket.onopen = () => {
           console.log("WebSocket connected");
@@ -56,6 +56,8 @@ const store = createStore({
             } else if (message.type === "gameStatus") {
               commit("setGameStatus", message.gameStatus);
               commit("setTimestamp", message.timestamp);
+            } else if (message.type === "updateRound") {
+              commit("setUpdatePhrase", message.phrase);
             }
 
             console.log("WebSocket message received:", message);
