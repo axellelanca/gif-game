@@ -47,7 +47,7 @@ export default {
         const date = new Date();
         const message = {
           type: "updateGameStatus",
-          status: "waitingCountDown",
+          status: "waitingCountDownChoose",
           timestamp: date.getTime(),
         };
         this.sendMessage(JSON.stringify(message));
@@ -79,12 +79,13 @@ export default {
   mounted() {
     this.getRandomPhrases();
     this.startGame();
-    this.unsubscribe = this.$store.subscribe((mutation) => {
+    this.$store.subscribe((mutation) => {
       if (
         mutation.type === "setGameStatus" &&
-        mutation.payload === "waitingCountDown" &&
+        mutation.payload === "waitingCountDownChoose" &&
         this.$store.state.timestamp
       ) {
+        console.log(mutation)
         const savedTimestamp = this.$store.state.timestamp;
         const currentTimestamp = Date.now();
         const countdown = Math.max(
@@ -103,9 +104,6 @@ export default {
       };
       this.sendMessage(JSON.stringify(message));
       clearInterval(this.interval);
-    }
-    if (this.unsubscribe) {
-      this.unsubscribe();
     }
   },
   
