@@ -57,16 +57,6 @@ export default {
   },
   mounted() {
     this.connectWebSocket();
-  },
-  beforeUnmount() {
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
-    if (this.unsubscribe) {
-      this.unsubscribe();
-    }
-  },
-  created() {
     this.unsubscribe = this.$store.subscribe((mutation) => {
       if (
         mutation.type === "setGameStatus" &&
@@ -83,5 +73,14 @@ export default {
       }
     });
   },
+  beforeUnmount() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
+  },
+    
 };
 </script>

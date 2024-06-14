@@ -71,14 +71,6 @@ export default {
           this.countdown--;
         } else {
           clearInterval(this.interval);
-          const date = new Date();
-          const message = {
-          type: "updateGameStatus",
-          status: "waitingCountDownGif",
-          timestamp: date.getTime(),
-        };
-          clearInterval(this.interval);
-          this.sendMessage(JSON.stringify(message));
           this.$router.push("/gifs");
         }
       }, 1000);
@@ -88,6 +80,21 @@ export default {
     this.getRandomPhrases();
     this.connectWebSocket();
     this.startGame();
+    this.unsubscribe = this.$store.subscribe((mutation) => {
+      if (
+        mutation.type === "setGameStatus" &&
+        mutation.payload === "waitingCountDown" &&
+        this.$store.state.timestamp
+      ) {
+        const savedTimestamp = this.$store.state.timestamp;
+        const currentTimestamp = Date.now();
+        const countdown = Math.max(
+          0,
+          Math.floor((savedTimestamp - currentTimestamp + 5000) / 1000)
+        );
+        this.startCountdown(countdown);
+      }
+    });
   },
   beforeUnmount() {
     if (this.interval) {
@@ -103,25 +110,6 @@ export default {
     }
   },
   
-  created() {
-    this.unsubscribe = this.$store.subscribe((mutation) => {
-      if (
-        mutation.type === "setGameStatus" &&
-        mutation.payload === "waitingCountDown" &&
-        this.$store.state.timestamp
-      ) {
-        console.log(this.$store.state.timestamp)
-        const savedTimestamp = this.$store.state.timestamp;
-        const currentTimestamp = Date.now();
-        const countdown = Math.max(
-          0,
-          Math.floor((savedTimestamp - currentTimestamp + 5000) / 1000)
-        );
-        this.startCountdown(countdown);
-
-      }
-    });
-  },
 };
 </script>
 
