@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 import HeaderComponent from "./HeaderComponent.vue";
 
 const gifsList = ref([]);
-const countdown = ref(60);
+const countdown = ref(15); // Changer la valeur initiale à 15 secondes
 const selectedGifId = ref(null); // État réactif pour suivre l'image sélectionnée
 const isVoteSubmitted = ref(false); // État réactif pour savoir si le vote est soumis
 
@@ -53,8 +53,8 @@ const submitVote = () => {
     isVoteSubmitted.value = true;
     console.log(`Voted for GIF ID: ${selectedGifId.value}`);
     // Ajoutez ici l'appel à l'API pour soumettre le vote
-    router.push("/results"); // Rediriger vers la page de résultats après le vote
   }
+  router.push("/results"); // Rediriger vers la page de résultats après le vote
 };
 </script>
 
