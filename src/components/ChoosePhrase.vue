@@ -40,7 +40,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions([ "sendMessage"]),
+    ...mapActions(["sendMessage"]),
     startGame() {
       if (!this.gameStarted) {
         this.gameStarted = true;
@@ -80,13 +80,13 @@ export default {
     this.getRandomPhrases();
     this.startGame();
     this.$store.subscribe((mutation) => {
-      console.log('test2',this.$store.state.gameStatus)
+      console.log("test2", this.$store.state.gameStatus);
       if (
         mutation.type === "setGameStatus" &&
         this.$store.state.gameStatus &&
         this.$store.state.timestamp
       ) {
-        console.log(mutation)
+        console.log(mutation);
         const savedTimestamp = this.$store.state.timestamp;
         const currentTimestamp = Date.now();
         const countdown = Math.max(
@@ -107,7 +107,6 @@ export default {
       clearInterval(this.interval);
     }
   },
-  
 };
 </script>
 

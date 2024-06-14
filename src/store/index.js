@@ -28,7 +28,7 @@ const store = createStore({
     },
     setUpdateRound(state, updateRound) {
       state.updateRound = updateRound;
-    }
+    },
   },
   actions: {
     connectWebSocket({ commit, state }) {
@@ -56,8 +56,8 @@ const store = createStore({
             } else if (message.type === "gameStatus") {
               commit("setGameStatus", message.gameStatus);
               commit("setTimestamp", message.timestamp);
-            } else if (message.type === "updateRound") {
-              commit("setUpdatePhrase", message.phrase);
+            } else if (message.type === "roundUpdate") {
+              commit("setUpdateRound", message.phrase);
             }
 
             console.log("WebSocket message received:", message);
