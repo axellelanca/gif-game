@@ -40,7 +40,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["sendMessage"]),
+    ...mapActions(["connectWebSocket", "sendMessage"]),
     startGame() {
       if (!this.gameStarted) {
         this.gameStarted = true;
@@ -78,15 +78,14 @@ export default {
   },
   mounted() {
     this.getRandomPhrases();
+    this.connectWebSocket();
     this.startGame();
-    this.$store.subscribe((mutation) => {
-      console.log("test2", this.$store.state.gameStatus);
+    this.unsubscribe = this.$store.subscribe((mutation) => {
       if (
         mutation.type === "setGameStatus" &&
-        this.$store.state.gameStatus &&
+        mutation.payload === "waitingCountDown" &&
         this.$store.state.timestamp
       ) {
-        console.log(mutation);
         const savedTimestamp = this.$store.state.timestamp;
         const currentTimestamp = Date.now();
         const countdown = Math.max(
@@ -106,7 +105,11 @@ export default {
       this.sendMessage(JSON.stringify(message));
       clearInterval(this.interval);
     }
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   },
+  
 };
 </script>
 

@@ -34,7 +34,7 @@ export default {
     ...mapState(['pseudo'])
   },
   methods: {
-    ...mapActions([ 'sendMessage']),
+    ...mapActions(['connectWebSocket', 'sendMessage']),
     ...mapMutations(['setPseudo']),
     submitPseudo() {
       if (this.pseudo.trim()) {
@@ -51,6 +51,9 @@ export default {
       }
     }
   },
+  mounted() {
+    this.connectWebSocket();
+  }
 };
 </script>
 
