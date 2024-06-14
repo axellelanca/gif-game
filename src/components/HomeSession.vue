@@ -2,10 +2,9 @@
   <div>
     <h1>Gif Game</h1>
     <p>Bienvenue, {{ pseudo }}!</p>
-    <router-link to="/">Changer de pseudo</router-link>
     <div v-if="users && users.length">
       <ul>
-        <li v-for="user in connectedUsers" :key="user.pseudo">
+        <li v-for="user in users" :key="user.pseudo">
           {{ user.pseudo }} - {{ user.status }}
         </li>
       </ul>
@@ -28,12 +27,10 @@ export default {
   },
   computed: {
     ...mapState(["pseudo", "users"]),
-    connectedUsers() {
-      return this.users.filter((user) => user.status === "online");
-    },
   },
   methods: {
-    ...mapActions(["connectWebSocket", "sendMessage"]),
+    ...mapActions(["sendMessage"]),
+    
     startGame() {
       const date = new Date();
       const message = {
@@ -56,13 +53,14 @@ export default {
     },
   },
   mounted() {
-    this.connectWebSocket();
-    this.unsubscribe = this.$store.subscribe((mutation) => {
+    this.$store.subscribe((mutation) => {
+      console.log("state" ,this.$store.state.gameStatus)
       if (
         mutation.type === "setGameStatus" &&
-        mutation.payload === "waitingCountDown" &&
+        this.$store.state.gameStatus === "waitingCountDown" &&
         this.$store.state.timestamp
       ) {
+        console.log("state" ,this.$store.state)
         const savedTimestamp = this.$store.state.timestamp;
         const currentTimestamp = Date.now();
         const countdown = Math.max(
@@ -77,11 +75,7 @@ export default {
     if (this.interval) {
       clearInterval(this.interval);
     }
-    if (this.unsubscribe) {
-      this.unsubscribe();
-    }
   },
-    
 };
 </script>
 
