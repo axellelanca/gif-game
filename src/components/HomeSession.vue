@@ -47,14 +47,14 @@ export default {
           this.countdown--;
         } else {
           clearInterval(this.interval);
+          this.beforeUnmount
           this.$router.push("/choose");
         }
       }, 1000);
     },
   },
   mounted() {
-    this.connectWebSocket();
-    this.unsubscribe = this.$store.subscribe((mutation) => {
+    this.$store.subscribe((mutation) => {
       if (
         mutation.type === "setGameStatus" &&
         mutation.payload === "waitingCountDown" &&
@@ -73,9 +73,6 @@ export default {
   beforeUnmount() {
     if (this.interval) {
       clearInterval(this.interval);
-    }
-    if (this.unsubscribe) {
-      this.unsubscribe();
     }
   },
 };

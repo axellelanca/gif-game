@@ -78,7 +78,6 @@ export default {
   },
   mounted() {
     this.getRandomPhrases();
-    this.connectWebSocket();
     this.startGame();
     this.unsubscribe = this.$store.subscribe((mutation) => {
       if (
