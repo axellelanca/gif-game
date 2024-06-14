@@ -5,7 +5,7 @@
     <router-link to="/">Changer de pseudo</router-link>
     <div v-if="users && users.length">
       <ul>
-        <li v-for="user in connectedUsers" :key="user.pseudo">
+        <li v-for="user in users" :key="user.pseudo">
           {{ user.pseudo }} - {{ user.status }}
         </li>
       </ul>
@@ -28,9 +28,6 @@ export default {
   },
   computed: {
     ...mapState(["pseudo", "users"]),
-    connectedUsers() {
-      return this.users.filter((user) => user.status === "online");
-    },
   },
   methods: {
     ...mapActions(["connectWebSocket", "sendMessage"]),
@@ -81,6 +78,5 @@ export default {
       this.unsubscribe();
     }
   },
-    
 };
 </script>
