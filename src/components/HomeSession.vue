@@ -2,7 +2,6 @@
   <div>
     <h1>Gif Game</h1>
     <p>Bienvenue, {{ pseudo }}!</p>
-    <router-link to="/">Changer de pseudo</router-link>
     <div v-if="users && users.length">
       <ul>
         <li v-for="user in users" :key="user.pseudo">
@@ -31,6 +30,7 @@ export default {
   },
   methods: {
     ...mapActions(["connectWebSocket", "sendMessage"]),
+    
     startGame() {
       const date = new Date();
       const message = {
