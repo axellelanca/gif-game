@@ -1,14 +1,12 @@
 <template>
   <div>
     <div class="header">
-      <div>
-        <img src="../assets/appLogo.png" alt="" />
-      </div>
+        <img src="../assets/appLogo.png" alt="" class="app-logo" />
       <div class="info">
         <p class="timer">ends in {{ countdown }} seconds</p>
         <div>
           <img class="star" src="../assets/uwuStar.png" alt="" />
-          <p class="pageTitle">choose your best gif</p>
+          <p class="pageTitle">{{ maintitle }}</p>
           <img class="star" src="../assets/uwuStar.png" alt="" />
         </div>
       </div>
@@ -22,7 +20,11 @@ export default {
     countdown: {
       type: Number,
       required: true
-    }
+    },
+    maintitle: {
+      type: Text,
+      required: true
+    },
   }
 };
 </script>
