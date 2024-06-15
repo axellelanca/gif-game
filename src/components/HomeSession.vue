@@ -39,7 +39,7 @@ export default {
     ...mapState(["pseudo", "users"]),
   },
   methods: {
-    ...mapActions(["connectWebSocket", "sendMessage"]),
+    ...mapActions(["sendMessage"]),
     
     startGame() {
       const date = new Date();
@@ -57,18 +57,21 @@ export default {
           this.countdown--;
         } else {
           clearInterval(this.interval);
-          //this.$router.push("/choose");
+
+          this.$router.push("/choose");
         }
       }, 1000);
     },
   },
   mounted() {
     this.$store.subscribe((mutation) => {
+      console.log("state" ,this.$store.state.gameStatus)
       if (
         mutation.type === "setGameStatus" &&
-        mutation.payload === "waitingCountDown" &&
+        this.$store.state.gameStatus === "waitingCountDown" &&
         this.$store.state.timestamp
       ) {
+        console.log("state" ,this.$store.state)
         const savedTimestamp = this.$store.state.timestamp;
         const currentTimestamp = Date.now();
         const countdown = Math.max(
@@ -180,3 +183,4 @@ button {
 }
 
 </style>
+
