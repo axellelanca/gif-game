@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="input-container">
-      <input  v-model="pseudo" placeholder="Choose your pseudo" />
+      <input  v-model="localPseudo" placeholder="Choose your pseudo" />
       <button @click="submitPseudo">Let's go</button>
     </div>
     <div class="p1-div-meme">
@@ -25,24 +25,23 @@
 import { mapActions, mapMutations, mapState } from 'vuex';
 
 export default {
-  data() {
-    return {
-      pseudo: ''
-    };
-  },
   computed: {
     ...mapState(['pseudo'])
+  },
+  data() {
+    return {
+      localPseudo: ''
+    };
   },
   methods: {
     ...mapActions([ 'sendMessage']),
     ...mapMutations(['setPseudo']),
     submitPseudo() {
-      if (this.pseudo.trim()) {
-        this.setPseudo(this.pseudo);
+      if (this.localPseudo.trim()) {
+        this.setPseudo(this.localPseudo);
         const message = JSON.stringify({
           type: 'join',
-          pseudo: this.pseudo,
-          status: 'online'
+          pseudo: this.localPseudo,
         });
         this.sendMessage(message);
         this.$router.push('/session');
