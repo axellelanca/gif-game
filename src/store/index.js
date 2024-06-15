@@ -33,8 +33,8 @@ const store = createStore({
   actions: {
     connectWebSocket({ commit, state }) {
       if (!state.socket || state.socket.readyState !== WebSocket.OPEN) {
-        const socket = new WebSocket("ws://10.0.4.53:4000");
-
+        //const socket = new WebSocket("ws://10.0.4.53:4000");
+        const socket = new WebSocket("ws://localhost:4000");
         socket.onopen = () => {
           console.log("WebSocket connected");
           if (state.pseudo && state.uuid) {
@@ -77,7 +77,7 @@ const store = createStore({
         commit("setSocket", socket);
       }
     },
-    sendMessage({ state }, message) {
+    async sendMessage({ state }, message) {
       if (state.socket && state.socket.readyState === WebSocket.OPEN) {
         state.socket.send(message);
       } else {
