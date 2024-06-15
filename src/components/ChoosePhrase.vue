@@ -121,7 +121,7 @@ export default {
           this.countdown--;
         } else {
           clearInterval(this.interval);
-          // this.$router.push("/gifs");
+           this.$router.push("/gifs");
         }
       }, 1000);
     },
