@@ -15,12 +15,12 @@
   </div>
 </template>
 
+
 <script>
-import { mapActions } from "vuex";
+import { mapState, mapActions } from "vuex";
 export default {
   data() {
     return {
-      unsubscribe: null,
       phrases: [
         "When you're vibing to music and an ad comes on",
         "When you're waiting for something and the internet is slow",
@@ -84,26 +84,27 @@ export default {
       selectedPhrases: [],
       selectedIndex: null,
       phraseToSend: null,
-      countdown: 5,
+      countdown: 5, // Initial countdown value in seconds
       interval: null,
-      gameStarted: false, // Ajout du drapeau
     };
+  },
+  computed: {
+    ...mapState(["gameStatus", "phrases", "timestamp"]),
   },
   methods: {
     ...mapActions(["sendMessage"]),
-    startGame() {
-      if (!this.gameStarted) {
-        this.gameStarted = true;
-        const date = new Date();
-        const message = {
-          type: "updateGameStatus",
-          status: "waitingCountDown",
-          timestamp: date.getTime(),
-        };
-        this.sendMessage(JSON.stringify(message));
-      }
+    startCountdown() {
+      this.interval = setInterval(() => {
+        if (this.countdown > 0) {
+          this.countdown--;
+        } else {
+          clearInterval(this.interval);
+          this.$router.push("/gifs"); // Rediriger lorsque le countdown atteint zéro
+        }
+      }, 1000);
     },
     getRandomPhrases() {
+      // Simuler la récupération des phrases depuis une source de données (API, Vuex, etc.)
       const shuffled = this.phrases.sort(() => 0.5 - Math.random());
       this.selectedPhrases = shuffled.slice(0, 2);
     },
@@ -111,41 +112,10 @@ export default {
       this.selectedIndex = index;
       this.phraseToSend = phrase;
     },
-    startCountdown(timestamp) {
-      if (this.interval) {
-        clearInterval(this.interval); // Nettoie l'intervalle précédent
-      }
-      this.countdown = timestamp;
-      this.interval = setInterval(() => {
-        if (this.countdown > 0) {
-          this.countdown--;
-        } else {
-          clearInterval(this.interval);
-           this.$router.push("/gifs");
-        }
-      }, 1000);
-    },
   },
   mounted() {
     this.getRandomPhrases();
-    this.startGame();
-    this.$store.subscribe((mutation) => {
-      console.log("test2", this.$store.state.gameStatus);
-      if (
-        mutation.type === "setGameStatus" &&
-        this.$store.state.gameStatus &&
-        this.$store.state.timestamp
-      ) {
-        console.log(mutation);
-        const savedTimestamp = this.$store.state.timestamp;
-        const currentTimestamp = Date.now();
-        const countdown = Math.max(
-          0,
-          Math.floor((savedTimestamp - currentTimestamp + 5000) / 1000)
-        );
-        this.startCountdown(countdown);
-      }
-    });
+    this.startCountdown();
   },
   beforeUnmount() {
     if (this.interval) {

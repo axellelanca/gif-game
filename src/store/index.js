@@ -103,11 +103,11 @@ const store = createStore({
         clearInterval(state.intervalId);
       }
 
-      let countdown = Math.floor((state.timestamp + 5000 - Date.now()) / 1000);
+      let countdown = Math.floor((state.timestamp + 6000 - Date.now()) / 1000);
       commit("setCountdown", countdown);
 
       const intervalId = setInterval(() => {
-        if (countdown > 0) {
+        if (countdown - 1 > 0) {
           countdown--;
           commit("setCountdown", countdown);
         } else {
@@ -116,14 +116,13 @@ const store = createStore({
           dispatch("handleCountdownComplete");
         }
       }, 1000);
-
       commit("setIntervalId", intervalId);
     },
     handleCountdownComplete({ commit, dispatch }) {
-      commit("setGameStatus", "waitingCountDownChoose");
+      commit("setGameStatus", "waiting");
       dispatch("sendMessage", JSON.stringify({
         type: "updateGameStatus",
-        status: "waitingCountDownChoose",
+        status: "waiting",
       }));
     },
     stopCountdown({ commit }) {

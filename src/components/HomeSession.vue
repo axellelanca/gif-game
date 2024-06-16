@@ -1,6 +1,5 @@
 <template>
   <div class="home-session-container">
-    <HeaderComponent :countdown="countdown" maintitle="Players" />
     <div v-if="users && users.length">
       <div class="users-list">
         <div v-for="user in users" :key="user.pseudo" class="user-item">
@@ -11,7 +10,7 @@
     <div class="start-button-div">
       <button @click="startGame" v-if="!countdown" class="start-button">Start</button>
     </div>
-    <div v-if="countdown" class="countdown">{{ countdown }} seconds remaining</div>
+    <div v-if="countdown" class="countdown">{{ countdown - 1  }} seconds remaining</div>
     <div class="bean-logo">
       <img src="../assets/mister_bean_meme.png" alt="" class="bean-logo" />
     </div>
@@ -20,12 +19,8 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-import HeaderComponent from "./HeaderComponent.vue";
 
 export default {
-  components: {
-    HeaderComponent,
-  },
   computed: {
     ...mapState(["pseudo", "users", "countdown", "gameStatus", "timestamp"]),
   },
@@ -42,7 +37,6 @@ export default {
       this.sendMessage(JSON.stringify(message));
       this.$store.commit('setTimestamp', date.getTime());
       this.$store.commit('setGameStatus', 'waitingCountDown');
-      this.$store.commit('setCountdown', Math.floor((date.getTime() + 5000 - Date.now()) / 1000));
       this.startCountdown();
     },
     handleCountdownComplete() {
@@ -53,7 +47,7 @@ export default {
     gameStatus(newStatus) {
       if (newStatus === "waitingCountDown") {
         this.startCountdown();
-      } else if (newStatus === "waitingCountDownChoose") {
+      } else if (newStatus === "waiting") {
         this.handleCountdownComplete();
       }
     },
