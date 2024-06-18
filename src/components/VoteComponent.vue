@@ -1,37 +1,55 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted ,watch, onUnmounted ,computed } from "vue";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import HeaderComponent from "./HeaderComponent.vue";
 
 const gifsList = ref([]);
-const countdown = ref(15); // Changer la valeur initiale à 15 secondes
-const selectedGifId = ref(null); // État réactif pour suivre l'image sélectionnée
-const isVoteSubmitted = ref(false); // État réactif pour savoir si le vote est soumis
+const selectedGifId = ref({});
+const isVoteSubmitted = ref(false); 
+const countdown = computed(() => store.state.countdown);
 
 const router = useRouter();
+const store = useStore();
 
-// Simuler les GIFs disponibles pour le vote (à remplacer par un appel réel à l'API si nécessaire)
-const fetchGifsForVote = async () => {
-  try {
-    const gifs = [
-      { id: '1', url: 'https://media.giphy.com/media/1xVdmUab7zCJ2/giphy.gif' },
-      { id: '2', url: 'https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif' },
-      { id: '3', url: 'https://media.giphy.com/media/26u4nJPf0JtQPdStq/giphy.gif' },
-    ];
-    gifsList.value = gifs.map(gif => ({
-      id: gif.id,
-      url: gif.url,
-      width: '200px',
-      height: '200px',
-    }));
-    console.log(gifsList.value);
-  } catch (error) {
-    console.log(error);
-  }
+const generateId = () => '_' + Math.random().toString(36).substr(2, 9);
+const fetchGifsForVote = () => {
+  gifsList.value = Object.values(selectedGifId.value).map(gif => ({
+    id: generateId(),
+    url: gif.gifUrl,
+    width: '200px',
+    height: '200px'
+  }));
 };
 
+const sendMessage = () => {
+  const selectedGif = gifsList.value.find(g => g.id === selectedGifId.value);
+  const message = {
+    type: "gifVote",
+    pseudo: store.state.pseudo,
+    gifUrl: selectedGif.url
+  };
+  console.log("Sending message:", message);
+  store.dispatch("sendMessage", JSON.stringify(message));
+};
+
+
+watch(countdown, (newCountdown) => {
+  if (newCountdown === 1) {
+    sendMessage();
+    router.push('/results');
+  }
+});
+onUnmounted(() => {
+  store.dispatch('stopCountdown')
+});
+
+
+
 onMounted(() => {
-  fetchGifsForVote(); // Fetch GIFs when the component is mounted
+  store.dispatch("setTimestamp", Date.now());
+  store.dispatch("startCountdown",10);
+  fetchGifsForVote();
   const interval = setInterval(() => {
     if (countdown.value > 0) {
       countdown.value--;
@@ -44,17 +62,23 @@ onMounted(() => {
   }, 1000);
 });
 
+watch(() => store.state.selectedGifs, (newSelectedGifs) => {
+  selectedGifId.value = newSelectedGifs;
+  fetchGifsForVote();
+});
+
 const selectGif = (id) => {
   selectedGifId.value = id;
+  
 };
 
 const submitVote = () => {
   if (selectedGifId.value !== null) {
     isVoteSubmitted.value = true;
-    console.log(`Voted for GIF ID: ${selectedGifId.value}`);
     // Ajoutez ici l'appel à l'API pour soumettre le vote
+  } else {
+    console.error("No GIF selected.");
   }
-  router.push("/results"); // Rediriger vers la page de résultats après le vote
 };
 </script>
 
@@ -72,7 +96,6 @@ const submitVote = () => {
         <img :src="gif.url" :alt="`GIF ${gif.id}`" class="gif-image" />
       </div>
     </div>
-    <button class="validate-button" @click="submitVote">Submit Vote</button>
     <div v-if="isVoteSubmitted" class="selected-gif-container">
       <img 
         v-if="selectedGifId !== null"

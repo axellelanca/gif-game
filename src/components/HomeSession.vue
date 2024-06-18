@@ -37,7 +37,7 @@ export default {
       this.sendMessage(JSON.stringify(message));
       this.$store.commit('setTimestamp', date.getTime());
       this.$store.commit('setGameStatus', 'waitingCountDown');
-      this.startCountdown();
+      this.$store.dispatch("startCountdown",5);
     },
     handleCountdownComplete() {
       this.$router.push("/choose");

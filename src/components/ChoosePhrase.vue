@@ -84,12 +84,12 @@ export default {
       selectedPhrases: [],
       selectedIndex: null,
       phraseToSend: null,
-      countdown: 5, // Initial countdown value in seconds
+      countdown: 5,
       interval: null,
     };
   },
   computed: {
-    ...mapState(["gameStatus", "phrases", "timestamp"]),
+    ...mapState(["gameStatus", "timestamp"]),
   },
   methods: {
     ...mapActions(["sendMessage"]),
@@ -99,9 +99,15 @@ export default {
           this.countdown--;
         } else {
           clearInterval(this.interval);
+          const message = {
+            type: "startRound",
+            phrase: this.phraseToSend,
+          };
+      this.sendMessage(JSON.stringify(message));
           this.$router.push("/gifs"); // Rediriger lorsque le countdown atteint zéro
         }
       }, 1000);
+    
     },
     getRandomPhrases() {
       // Simuler la récupération des phrases depuis une source de données (API, Vuex, etc.)
@@ -119,11 +125,6 @@ export default {
   },
   beforeUnmount() {
     if (this.interval) {
-      const message = {
-        type: "startRound",
-        phrase: this.phraseToSend,
-      };
-      this.sendMessage(JSON.stringify(message));
       clearInterval(this.interval);
     }
   },

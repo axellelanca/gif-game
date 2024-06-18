@@ -1,23 +1,30 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted ,watch, onUnmounted ,computed } from "vue";
+//import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import HeaderComponent from "./HeaderComponent.vue";
 
-const results = ref([]); // Pour stocker les résultats des votes
+const results = ref([]);
+const selectedGifId = ref({});
+const countdown = computed(() => store.state.countdown);
 
-// Simuler l'obtention des résultats des votes (à remplacer par un appel réel à l'API si nécessaire)
-const fetchResults = async () => {
-  try {
-    // Simuler les résultats des votes
-    const simulatedResults = [
-      { id: '1', url: 'https://media.giphy.com/media/1xVdmUab7zCJ2/giphy.gif', votes: 5 },
-      { id: '2', url: 'https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif', votes: 3 },
-      { id: '3', url: 'https://media.giphy.com/media/26u4nJPf0JtQPdStq/giphy.gif', votes: 7 },
-    ];
-    results.value = simulatedResults;
-    console.log(results.value);
-  } catch (error) {
-    console.log(error);
-  }
+const store = useStore();
+
+const fetchResults = () => {
+  results.value = store.state.votes.map(vote => ({
+    gifUrl: vote.gifUrl,
+    votes: vote.votes
+  }));
 };
+
+watch(countdown, (newCountdown) => {
+  if (newCountdown === 1) {
+    //router.push('/scores');
+  }
+});
+onUnmounted(() => {
+  store.dispatch('stopCountdown')
+});
 
 const sortedResults = computed(() => {
   return [...results.value].sort((a, b) => b.votes - a.votes);
@@ -32,20 +39,35 @@ const otherResults = computed(() => {
 });
 
 onMounted(() => {
-  fetchResults(); // Fetch results when the component is mounted
+  fetchResults(); 
+  store.dispatch("setTimestamp", Date.now());
+  store.dispatch("startCountdown",10);
+  const interval = setInterval(() => {
+    if (countdown.value > 0) {
+      countdown.value--;
+    } else {
+      clearInterval(interval);
+    }
+  }, 1000);
 });
+watch(() => store.state.selectedGifs, (newSelectedGifs) => {
+  selectedGifId.value = newSelectedGifs;
+  fetchResults();
+});
+
 </script>
 
 <template>
+  <HeaderComponent :countdown="countdown" />
   <div class="results-container">
     <h1>Results</h1>
     <div v-if="topResult" class="top-result">
-      <img :src="topResult.url" :alt="`GIF ${topResult.id}`" class="top-result-gif" />
+      <img :src="topResult.gifUrl" :alt="`GIF ${topResult.gifUrl}`" class="top-result-gif" />
       <p class="top-result-text">1er - Votes: {{ topResult.votes }}</p>
     </div>
     <div class="results-list">
-      <div class="result-item" v-for="(result, index) in otherResults" :key="result.id">
-        <img :src="result.url" :alt="`GIF ${result.id}`" class="result-gif" />
+      <div class="result-item" v-for="(result, index) in otherResults" :key="result.gifUrl">
+        <img :src="result.gifUrl" :alt="`GIF ${result.gifUrl}`" class="result-gif" />
         <p>{{ index + 2 }}ème - Votes: {{ result.votes }}</p>
       </div>
     </div>

@@ -7,11 +7,13 @@ const store = createStore({
     socket: null,
     pseudo: "",
     users: [],
-    updatePhrase: null,
     gameStatus: "waiting",
     timestamp: null,
     countdown: 0,
     intervalId: null,
+    phrase: {},
+    selectedGifs: {},
+    votes:[],
   },
   mutations: {
     setSocket(state, socket) {
@@ -32,6 +34,11 @@ const store = createStore({
     setCountdown(state, countdown) {
       state.countdown = countdown;
     },
+    decrementCountdown(state) {
+      if (state.countdown > 0) {
+        state.countdown--;
+      }
+    },
     setIntervalId(state, intervalId) {
       state.intervalId = intervalId;
     },
@@ -39,12 +46,31 @@ const store = createStore({
       clearInterval(state.intervalId);
       state.intervalId = null;
     },
-    setUpdateRound(state, updateRound) {
-      state.updateRound = updateRound;
+    setPhrase(state, phrase) {
+      state.phrase = phrase;
+    },
+    updatePhraseVotes(state, { phrase, votes }) {
+      if (state.phrase[phrase]) {
+        state.phrase[phrase] += votes;
+      } else {
+        state.phrase[phrase] = votes;
+      }
+    },
+    setSelectedGifs(state, selectedGifs) {
+      state.selectedGifs = selectedGifs;
+    },
+    setGifVote(state, { pseudo, gifUrl }) {
+      if (!state.selectedGifs[pseudo]) {
+        state.selectedGifs[pseudo] = {};
+      }
+      state.selectedGifs[pseudo].gifUrl = gifUrl;
+    },
+    setVotes(state, votes) {
+      state.votes = votes;
     },
   },
   actions: {
-    connectWebSocket({ commit, state, dispatch }) {
+    connectWebSocket({ commit, state }) {
       if (!state.socket || state.socket.readyState !== WebSocket.OPEN) {
         const socket = new WebSocket("ws://localhost:4000");
         socket.onopen = () => {
@@ -67,11 +93,24 @@ const store = createStore({
             } else if (message.type === "gameStatus") {
               commit("setGameStatus", message.gameStatus);
               commit("setTimestamp", message.timestamp);
-              if (message.gameStatus === "waitingCountDown") {
-                dispatch("startCountdown");
-              }
             } else if (message.type === "roundUpdate") {
-              commit("setUpdateRound", message.phrase);
+              commit("setPhrase", message.phrase); // Met à jour state.phrase avec les nouvelles phrases
+            }else if (message.type === "selectedGifs") {
+              commit("setSelectedGifs", message);
+              store.dispatch('updateSelectedGifs', message.selectedGifs);
+            }
+            else if (message.type === "gifVote") {
+              commit("setGifVote", {
+                pseudo: message.pseudo,
+                gifUrl: message.gifUrl
+              });
+            } else if (message.type === "updatePhraseVotes") {
+              commit("updatePhraseVotes", {
+                phrase: message.phrase,
+                votes: message.votes,
+              }); // Met à jour les votes d'une phrase spécifique
+            } else if (message.type === "votes") {
+              commit("setVotes", message.votes);
             }
 
             console.log("WebSocket message received:", message);
@@ -98,21 +137,25 @@ const store = createStore({
         console.error("WebSocket is not open");
       }
     },
-    startCountdown({ commit, state, dispatch }) {
+    startCountdown({ commit, state, dispatch }, initialValue = 10) {
       if (state.intervalId) {
         clearInterval(state.intervalId);
       }
+      if (!state.timestamp) {
+        console.error('Timestamp not initialized');
+        return;
+      }
+      let countdown = Math.floor((state.timestamp + initialValue * 1000 - Date.now()) / 1000);
+      countdown = Math.max(countdown, 0);
 
-      let countdown = Math.floor((state.timestamp + 6000 - Date.now()) / 1000);
       commit("setCountdown", countdown);
 
       const intervalId = setInterval(() => {
-        if (countdown - 1 > 0) {
-          countdown--;
-          commit("setCountdown", countdown);
+        if (state.countdown > 1) {
+          commit("decrementCountdown");
         } else {
           clearInterval(intervalId);
-          commit("setIntervalId", null);
+          commit('clearIntervalId');
           dispatch("handleCountdownComplete");
         }
       }, 1000);
@@ -133,6 +176,16 @@ const store = createStore({
         state.socket.close();
       }
     },
+    setTimestamp({ commit }, timestamp) {
+      commit("setTimestamp", timestamp);
+    },
+    updateSelectedGifs({ commit }, gifs) {
+      commit('setSelectedGifs', gifs);
+    },
+    setVotes({ commit }, votes) {
+      commit('setVotes', votes);
+    },
+
     initializeStore() {},
   },
 });
