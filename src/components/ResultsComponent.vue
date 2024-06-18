@@ -1,6 +1,5 @@
 <script setup>
-import { ref, onMounted ,watch, onUnmounted ,computed } from "vue";
-//import { useRouter } from "vue-router";
+import { ref, onMounted, watch, onUnmounted, computed } from "vue";
 import { useStore } from "vuex";
 import HeaderComponent from "./HeaderComponent.vue";
 
@@ -19,11 +18,12 @@ const fetchResults = () => {
 
 watch(countdown, (newCountdown) => {
   if (newCountdown === 1) {
-    //router.push('/scores');
+    fetchResults();
   }
 });
+
 onUnmounted(() => {
-  store.dispatch('stopCountdown')
+  store.dispatch('stopCountdown');
 });
 
 const sortedResults = computed(() => {
@@ -39,17 +39,18 @@ const otherResults = computed(() => {
 });
 
 onMounted(() => {
-  fetchResults(); 
+  fetchResults();
   store.dispatch("setTimestamp", Date.now());
-  store.dispatch("startCountdown",10);
+  store.dispatch("startCountdown", 10);
   const interval = setInterval(() => {
     if (countdown.value > 0) {
-      countdown.value--;
+      store.commit('decrementCountdown');
     } else {
       clearInterval(interval);
     }
   }, 1000);
 });
+
 watch(() => store.state.selectedGifs, (newSelectedGifs) => {
   selectedGifId.value = newSelectedGifs;
   fetchResults();
