@@ -1,0 +1,11 @@
+{
+  "name": "websocket",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "ws": "^7.4.5"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}

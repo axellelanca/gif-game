@@ -1,29 +1,82 @@
 <script setup>
-import { ref, watch, onMounted, computed } from "vue";
-import { useRouter } from "vue-router";
-import HeaderComponent from "./HeaderComponent.vue";
-import { useStore } from "vuex";
+import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore} from 'vuex';
 
-const getSearch = ref("");
+const searchQuery = ref("");
 const gifsList = ref([]);
-const countdown = ref(10);
-const selectedGifUrl = ref(null); // État réactif pour suivre l'image sélectionnée
+const selectedGifId = ref(null);
 
 const router = useRouter();
 const store = useStore();
 
-// Accéder à l'état 'updateRound' du store Vuex
-const phrase = computed(() => store.state.updateRound);
-const pseudo = computed(() => store.state.pseudo);
-const sendMessage = computed(() => store.state);
+const fetchGifs = async () => {
+  try {
+    const response = await fetch(
+      `https://api.giphy.com/v1/gifs/search?q=${searchQuery.value}&api_key=yDhEs28AeDl6Pc40isbqGH2BTsnOtTIs&limit=10`
+    );
+    const data = await response.json();
+    gifsList.value = data.data.map(gif => ({
+      id: gif.id,
+      url: gif.images.fixed_height.url
+    }));
+  } catch (error) {
+    console.error("Error fetching GIFs:", error);
+  }
+};
 
-const getMaxVotesPhrase = (votes) => {
-  if (!votes) return ""; // Vérification de sécurité pour s'assurer que votes n'est pas undefined
+const selectGif = (gif) => {
+  selectedGifId.value = gif.id;
+};
+
+watch(searchQuery, () => {
+  if (searchQuery.value.trim() !== "") {
+    fetchGifs();
+  }
+});
+
+const countdown = computed(() => store.state.countdown);
+
+const sendMessage = () => {
+  if (!selectedGifId.value) {
+    console.error("No GIF selected.");
+    return;
+  }
+  const selectedGif = gifsList.value.find(g => g.id === selectedGifId.value);
+
+  if (!selectedGif) {
+    console.error("Selected GIF not found in the list.");
+    return;
+  }
+
+  const message = {
+    type: "userGifSelection",
+    pseudo: store.state.pseudo,
+    gifUrl: gifsList.value.find(gif => gif.id === selectedGifId.value).url
+  };
+  console.log("Sending message:", message);
+  store.dispatch("sendMessage", JSON.stringify(message));
+};
+watch(countdown, (newCountdown) => {
+  if (newCountdown === 1) {
+    sendMessage();
+    router.push('/vote');
+  }
+});
+
+onMounted(() => {
+  store.dispatch("setTimestamp", Date.now());
+  store.dispatch("startCountdown",5);
+});
+
+
+const getMaxVotesPhrase = (phrases) => {
+  if (!phrases) return "";
 
   let maxVotes = -1;
   let maxVotesPhrase = "";
 
-  for (const [phrase, vote] of Object.entries(votes)) {
+  for (const [phrase, vote] of Object.entries(phrases)) {
     if (vote > maxVotes) {
       maxVotes = vote;
       maxVotesPhrase = phrase;
@@ -33,82 +86,22 @@ const getMaxVotesPhrase = (votes) => {
 };
 
 // Propriété calculée pour obtenir la phrase avec le plus de votes
-const maxVotesPhrase = computed(() => getMaxVotesPhrase(phrase.value));
-
-const fetchGif = async () => {
-  console.log(
-    "okpijuhytdrfygvbhnj,kpiuytdryuiouuyjgduzgduzguzgdfuzg",
-    sendMessage
-  );
-  console.log("Max votes phrase:", maxVotesPhrase.value); // Ajout du log ici
-  try {
-    const request = await fetch(
-      `https://tenor.googleapis.com/v2/search?q=${getSearch.value}&key=AIzaSyCds2gvFpebjl5Z2ExuUGRkn2b12dXHm0Q&limit=10`
-    );
-    const response = await request.json();
-    gifsList.value = response.results;
-
-    gifsList.value = gifsList.value.reduce((acc, current) => {
-      acc.push({
-        id: current.id,
-        url: current.media_formats.gif.url,
-        width: current.media_formats.gif.dims[0] + "px",
-        height: current.media_formats.gif.dims[1] + "px",
-      });
-      return acc;
-    }, []);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-watch(getSearch, () => {
-  fetchGif();
+const maxVotesPhrase = computed(() => {
+  return getMaxVotesPhrase(store.state.phrase);
 });
 
-onMounted(() => {
-  const interval = setInterval(() => {
-    if (countdown.value > 0) {
-      countdown.value--;
-    } else {
-      const message = {
-        type: "updateGameStatus",
-        status: "waitingCountDown",
-        timestamp: "lkjhgf",
-      };
-      sendMessage(JSON.stringify(message));
-      console.log(pseudo);
-      clearInterval(interval);
-      router.push("/vote");
-    }
-  }, 1000);
-});
-
-const selectGif = (gif) => {
-  selectedGifUrl.value = gif.url;
-  console.log(store._actions);
-  // store._actions.sendMessage(
-  //   JSON.stringify({
-  //     bonjour: "hello",
-  //   })
-  // );
-};
-
-// Watch for changes in the phrase and log them
-watch(phrase, (newVal) => {
-  console.log("Phrase from store:", newVal);
+onUnmounted(() => {
+  store.dispatch('stopCountdown')
 });
 </script>
 
 <template>
-  <HeaderComponent :countdown="countdown" />
   <div class="gif-selector-container">
     <p>Phrase with the most votes: {{ maxVotesPhrase }}</p>
-    <!-- Affichage de la phrase avec le plus de votes -->
     <input
       class="custom-input"
       type="text"
-      v-model="getSearch"
+      v-model="searchQuery"
       placeholder="Search for a meme..."
     />
     <div class="gifs-list">
@@ -122,7 +115,7 @@ watch(phrase, (newVal) => {
         <img :src="gif.url" :alt="`GIF ${gif.id}`" class="gif-image" />
       </div>
     </div>
-    <button class="validate-button">Validate</button>
+    <div class="timer">{{ countdown }} seconds remaining</div> <!-- Utilisation de state.countdown -->
   </div>
 </template>
 
