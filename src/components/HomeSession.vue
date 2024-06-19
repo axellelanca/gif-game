@@ -1,4 +1,16 @@
 <template>
+  <div>
+    <div class="header">
+      <img src="../assets/appLogo.png" alt="" class="app-logo" />
+      <div class="info">
+        <div>
+          <img class="star" src="../assets/uwuStar.png" alt="" />
+          <p class="pageTitle">Players</p>
+          <img class="star" src="../assets/uwuStar.png" alt="" />
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="home-session-container">
     <div v-if="users && users.length">
       <div class="users-list">
@@ -156,5 +168,10 @@ button {
   width: 30%;
   height: auto;
   z-index: 1000;
+}
+
+.countdown {
+  color: #F0F154;
+  text-align: center;
 }
 </style>

@@ -1,6 +1,4 @@
 /* src/assets/styles/App.css */
-
-
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
 
 
@@ -19,4 +17,5 @@ body {
   font-family: "IBM Plex Mono", monospace;
   font-weight: 400;
   font-style: normal;
+  background-color: #112030;
 }

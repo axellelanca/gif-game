@@ -66,7 +66,7 @@ watch(countdown, (newCountdown) => {
 
 onMounted(() => {
   store.dispatch("setTimestamp", Date.now());
-  store.dispatch("startCountdown",5);
+  store.dispatch("startCountdown",15);
 });
 
 

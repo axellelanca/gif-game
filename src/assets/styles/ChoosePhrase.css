@@ -6,24 +6,44 @@
   
   .timer {
     font-size: 24px;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     color: black; /* Ajout de cette ligne pour s'assurer que le texte est visible */
   }
   
   .phrases {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 41px;
   }
   
   .phrase-card {
-    background: #333;
-    padding: 20px;
+    background: #fff;
     border-radius: 10px;
     cursor: pointer;
     transition: background 0.3s;
+    position: relative;
+    padding: 8px;
+    width: 500px;
+    height: 70px;
   }
+
+  .phrase-card p {
+    color: #000;
+  }
+
+.phrase-card::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 17px;
+  width: 508px;
+  height: 82px;
+  border-radius: 3px;
+  background: #F0F154;
+  z-index: -1;
+}
   
   .phrase-card.selected {
-    background: #f39c12;
+    border: 2px solid #F080DE;
+    box-shadow: 0px 0px 10px 0px #F080DE;
   }

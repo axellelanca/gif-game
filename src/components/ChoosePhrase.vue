@@ -1,6 +1,17 @@
 <template>
+  <div>
+    <div class="header">
+      <img src="../assets/appLogo.png" alt="" class="app-logo" />
+      <div class="info">
+        <div>
+          <img class="star" src="../assets/uwuStar.png" alt="" />
+          <p class="pageTitle">Pick a phrase</p>
+          <img class="star" src="../assets/uwuStar.png" alt="" />
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="choose-phrase">
-    <h1>Pick the one you want to react to</h1>
     <div class="timer">{{ countdown }} seconds remaining</div>
     <div class="phrases">
       <div
@@ -9,7 +20,7 @@
         :class="['phrase-card', { selected: selectedIndex === index }]"
         @click="selectPhrase(index, phrase)"
       >
-        {{ phrase }}
+        <p>{{ phrase }}</p>
       </div>
     </div>
   </div>
@@ -84,7 +95,7 @@ export default {
       selectedPhrases: [],
       selectedIndex: null,
       phraseToSend: null,
-      countdown: 5,
+      countdown: 20,
       interval: null,
     };
   },
