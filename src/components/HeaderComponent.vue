@@ -3,7 +3,6 @@
     <div class="header">
         <img src="../assets/appLogo.png" alt="" class="app-logo" />
       <div class="info">
-        <p class="timer">ends in {{ countdown }} seconds</p>
         <div>
           <img class="star" src="../assets/uwuStar.png" alt="" />
           <p class="pageTitle">{{ maintitle }}</p>

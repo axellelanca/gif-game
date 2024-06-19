@@ -1,16 +1,5 @@
 <template>
-  <div>
-    <div class="header">
-      <img src="../assets/appLogo.png" alt="" class="app-logo" />
-      <div class="info">
-        <div>
-          <img class="star" src="../assets/uwuStar.png" alt="" />
-          <p class="pageTitle">Players</p>
-          <img class="star" src="../assets/uwuStar.png" alt="" />
-        </div>
-      </div>
-    </div>
-  </div>
+  <header-component maintitle="Players"/>
   <div class="home-session-container">
     <div v-if="users && users.length">
       <div class="users-list">
@@ -31,8 +20,10 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import HeaderComponent from "@/components/HeaderComponent.vue";
 
 export default {
+  components: {HeaderComponent},
   computed: {
     ...mapState(["pseudo", "users", "countdown", "gameStatus", "timestamp"]),
   },

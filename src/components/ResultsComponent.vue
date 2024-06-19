@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, watch, onUnmounted, computed } from "vue";
 import { useStore } from "vuex";
-import HeaderComponent from "./HeaderComponent.vue";
+import HeaderComponent from "@/components/HeaderComponent.vue";
 
 const results = ref([]);
 const selectedGifId = ref({});
@@ -59,9 +59,8 @@ watch(() => store.state.selectedGifs, (newSelectedGifs) => {
 </script>
 
 <template>
-  <HeaderComponent :countdown="countdown" />
+  <header-component maintitle="Score"/>
   <div class="results-container">
-    <h1>Results</h1>
     <div v-if="topResult" class="top-result">
       <img :src="topResult.gifUrl" :alt="`GIF ${topResult.gifUrl}`" class="top-result-gif" />
       <p class="top-result-text">1er - Votes: {{ topResult.votes }}</p>

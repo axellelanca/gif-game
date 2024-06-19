@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-
+import HeaderComponent from "./HeaderComponent.vue";
 const scores = ref([]); // Pour stocker les scores des joueurs
 
 // Simuler l'obtention des scores (à remplacer par un appel réel à l'API si nécessaire)
@@ -27,6 +27,7 @@ onMounted(() => {
 </script>
 
 <template>
+  <header-component maintitle="Choose your best gif !"/>
   <div class="scores-container">
     <h1>Final ranking</h1>
     <div class="scores-list">

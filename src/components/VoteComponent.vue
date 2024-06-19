@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import HeaderComponent from "./HeaderComponent.vue";
 
+
 const gifsList = ref([]);
 const selectedGifId = ref({});
 const isVoteSubmitted = ref(false); 
@@ -48,7 +49,7 @@ onUnmounted(() => {
 
 onMounted(() => {
   store.dispatch("setTimestamp", Date.now());
-  store.dispatch("startCountdown",10);
+  store.dispatch("startCountdown",15);
   fetchGifsForVote();
   const interval = setInterval(() => {
     if (countdown.value > 0) {
@@ -83,7 +84,8 @@ const submitVote = () => {
 </script>
 
 <template>
-  <HeaderComponent :countdown="countdown" />
+  <headerComponent maintitle="Vote for your favorite Gif"/>
+  <div class="timer">{{ countdown }} seconds remaining</div>
   <div class="gif-selector-container">
     <div class="gifs-list">
       <div

@@ -11,7 +11,7 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  width: 400px;
+  max-width: 800px;
 }
 
 .info > div:first-of-type {

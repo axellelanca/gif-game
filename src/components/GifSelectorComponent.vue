@@ -2,6 +2,7 @@
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore} from 'vuex';
+import HeaderComponent from "@/components/HeaderComponent.vue";
 
 const searchQuery = ref("");
 const gifsList = ref([]);
@@ -66,7 +67,7 @@ watch(countdown, (newCountdown) => {
 
 onMounted(() => {
   store.dispatch("setTimestamp", Date.now());
-  store.dispatch("startCountdown",15);
+  store.dispatch("startCountdown",10);
 });
 
 
@@ -96,8 +97,9 @@ onUnmounted(() => {
 </script>
 
 <template>
+  <header-component maintitle="Choose your best gif !"/>
   <div class="gif-selector-container">
-    <p>Phrase with the most votes: {{ maxVotesPhrase }}</p>
+    <p>"{{ maxVotesPhrase }}"</p>
     <input
       class="custom-input"
       type="text"

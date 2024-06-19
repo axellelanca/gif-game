@@ -1,16 +1,5 @@
 <template>
-  <div>
-    <div class="header">
-      <img src="../assets/appLogo.png" alt="" class="app-logo" />
-      <div class="info">
-        <div>
-          <img class="star" src="../assets/uwuStar.png" alt="" />
-          <p class="pageTitle">Pick a phrase</p>
-          <img class="star" src="../assets/uwuStar.png" alt="" />
-        </div>
-      </div>
-    </div>
-  </div>
+  <header-component maintitle="Pick a phrase"/>
   <div class="choose-phrase">
     <div class="timer">{{ countdown }} seconds remaining</div>
     <div class="phrases">
@@ -29,7 +18,9 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import HeaderComponent from "@/components/HeaderComponent.vue";
 export default {
+  components: {HeaderComponent},
   data() {
     return {
       phrases: [
