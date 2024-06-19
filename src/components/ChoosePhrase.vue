@@ -12,6 +12,9 @@
         <p>{{ phrase }}</p>
       </div>
     </div>
+    <div class="phrase-img">
+      <img src="../assets/phrase_img.png" alt="" class="phrase-img" />
+    </div>
   </div>
 </template>
 

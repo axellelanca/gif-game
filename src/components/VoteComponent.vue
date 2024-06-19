@@ -49,7 +49,7 @@ onUnmounted(() => {
 
 onMounted(() => {
   store.dispatch("setTimestamp", Date.now());
-  store.dispatch("startCountdown",15);
+  store.dispatch("startCountdown",20);
   fetchGifsForVote();
   const interval = setInterval(() => {
     if (countdown.value > 0) {
@@ -85,8 +85,8 @@ const submitVote = () => {
 
 <template>
   <headerComponent maintitle="Vote for your favorite Gif"/>
-  <div class="timer">{{ countdown }} seconds remaining</div>
   <div class="gif-selector-container">
+    <div class="timer">{{ countdown }} seconds remaining</div>
     <div class="gifs-list">
       <div
         class="gif-item"
@@ -106,6 +106,9 @@ const submitVote = () => {
         alt="Selected GIF" 
       />
       <p>Thank you for voting!</p>
+    </div>
+    <div class="vote-img">
+      <img src="../assets/vote_img.png" alt="" class="vote-img" />
     </div>
   </div>
 </template>

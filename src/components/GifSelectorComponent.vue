@@ -67,7 +67,7 @@ watch(countdown, (newCountdown) => {
 
 onMounted(() => {
   store.dispatch("setTimestamp", Date.now());
-  store.dispatch("startCountdown",10);
+  store.dispatch("startCountdown",35);
 });
 
 
@@ -99,6 +99,7 @@ onUnmounted(() => {
 <template>
   <header-component maintitle="Choose your best gif !"/>
   <div class="gif-selector-container">
+    <div class="timer">{{ countdown }} seconds remaining</div>
     <p>"{{ maxVotesPhrase }}"</p>
     <input
       class="custom-input"
@@ -117,7 +118,9 @@ onUnmounted(() => {
         <img :src="gif.url" :alt="`GIF ${gif.id}`" class="gif-image" />
       </div>
     </div>
-    <div class="timer">{{ countdown }} seconds remaining</div> <!-- Utilisation de state.countdown -->
+    <div class="gif-img">
+      <img src="../assets/gif_img.png" alt="" class="gif-img" />
+    </div><!-- Utilisation de state.countdown -->
   </div>
 </template>
 
